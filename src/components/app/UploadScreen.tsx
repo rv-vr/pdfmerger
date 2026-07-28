@@ -287,15 +287,15 @@ export function UploadScreen({
   const dragCounter = useRef(0)
   const globalErrorTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const ready = !!pdfFile && csvRows.length > 0
+  const ready = !!pdfFile
   const csvFile =
     csvRows.length > 0 ? ({ name: _csvFileName || "data.csv" } as File) : null
 
-  const statusText = ready
-    ? "Both files ready"
-    : pdfFile || csvRows.length > 0
-      ? "1 of 2 uploaded"
-      : "Upload both files to continue"
+  const statusText = !pdfFile
+    ? "Upload a PDF template to continue"
+    : csvRows.length > 0
+      ? "PDF + CSV ready"
+      : "PDF ready — CSV optional"
 
   const showGlobalError = (msg: string) => {
     if (globalErrorTimer.current) clearTimeout(globalErrorTimer.current)
@@ -407,7 +407,7 @@ export function UploadScreen({
             size="sm"
             className="gap-1.5"
           >
-            Open editor
+            {pdfFile ? "Open editor" : "Upload PDF to start"}
             <ChevronRight className="size-3.5" />
           </Button>
         </div>
