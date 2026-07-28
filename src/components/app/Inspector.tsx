@@ -11,6 +11,7 @@ import {
   ArrowDownToLine,
   Maximize2,
   Layers,
+  Type,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -430,14 +431,26 @@ export function Inspector({
       ) : selectedField ? (
         <ScrollArea className="flex-1">
           {/* Field header */}
-          <div className="flex items-center gap-1 border-b border-border px-3 py-2">
+            <div className="flex items-center gap-1 border-b border-border px-3 py-2">
             <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <Tag className="size-3.5" />
+              {selectedField.isStatic ? <Type className="size-3.5" /> : <Tag className="size-3.5" />}
             </div>
             <div className="min-w-0 flex-1 px-1">
-              <p className="truncate text-sm font-semibold leading-tight">
-                {selectedField.fieldName}
-              </p>
+              {selectedField.isStatic ? (
+                <Input
+                  value={selectedField.fieldName}
+                  onChange={(e) => onUpdate({ fieldName: e.target.value })}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") onCommit()
+                  }}
+                  onBlur={() => onCommit()}
+                  className="h-7 text-sm font-semibold"
+                />
+              ) : (
+                <p className="truncate text-sm font-semibold leading-tight">
+                  {selectedField.fieldName}
+                </p>
+              )}
             </div>
             <Button
               variant="ghost"
