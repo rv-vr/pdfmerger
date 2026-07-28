@@ -63,16 +63,17 @@ export function useExport(
   const [state, dispatch] = useReducer(exportReducer, initialState)
 
   const handleDownloadCombinedPDF = async () => {
-    if (!pdfBytes || csvRows.length === 0 || placedFields.length === 0) return
+    if (!pdfBytes || placedFields.length === 0) return
+    const rows = csvRows.length > 0 ? csvRows : [{}]
     dispatch({
       type: "start",
-      message: "Generating unified PDF file…",
-      total: csvRows.length,
+      message: "Generating PDF…",
+      total: rows.length,
     })
     try {
       const result = await generateCombinedPDF(
         pdfBytes.slice(0),
-        csvRows,
+        rows,
         placedFields,
         (current, total) => dispatch({ type: "progress", current, total })
       )
@@ -81,25 +82,22 @@ export function useExport(
       })
       const link = document.createElement("a")
       link.href = URL.createObjectURL(blob)
-      link.download = `merged_${pdfFile?.name.replace(".pdf", "") || "output"}.pdf`
+      link.download = csvRows.length > 0
+        ? `merged_${pdfFile?.name.replace(".pdf", "") || "output"}.pdf`
+        : `template_${pdfFile?.name.replace(".pdf", "") || "output"}.pdf`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
     } catch (err) {
       console.error(err)
-      alert("Error rendering combined PDF. See developer console for details.")
+      alert("Error rendering PDF. See developer console for details.")
     } finally {
       dispatch({ type: "done" })
     }
   }
 
   const handleDownloadZIP = async () => {
-    if (
-      !pdfBytes ||
-      csvRows.length === 0 ||
-      placedFields.length === 0 ||
-      !filenameColumn
-    )
+    if (!pdfBytes || placedFields.length === 0 || csvRows.length === 0 || !filenameColumn)
       return
     dispatch({
       type: "start",
