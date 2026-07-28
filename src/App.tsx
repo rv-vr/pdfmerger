@@ -96,7 +96,6 @@ export default function App() {
           canExport={
             view === "editor" &&
             !!pdf.pdfBytes &&
-            csv.csvRows.length > 0 &&
             fields.placedFields.length > 0
           }
           onExportClick={exportState.openExportDialog}
@@ -212,6 +211,7 @@ export default function App() {
                 onAddGuide={fields.addGuide}
                 onRemoveGuide={fields.removeGuide}
                 onUpdateGuidePosition={fields.updateGuidePosition}
+                onAddTextField={fields.addStaticTextField}
               />
             </Suspense>
 
