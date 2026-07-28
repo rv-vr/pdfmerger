@@ -188,7 +188,13 @@ export function FieldsSidebar({
 
           {/* Column cards */}
           <div className="flex flex-col gap-1">
-            {filtered.length === 0 ? (
+            {csvHeaders.length === 0 ? (
+              <p className="px-1 py-2 text-xs text-muted-foreground">
+                No CSV dataset loaded. Use{" "}
+                <span className="font-semibold">Add Text</span> in the toolbar
+                to place static text, or upload a CSV from the file menu.
+              </p>
+            ) : filtered.length === 0 ? (
               <p className="px-1 py-2 text-xs text-muted-foreground">
                 No matching columns.
               </p>
