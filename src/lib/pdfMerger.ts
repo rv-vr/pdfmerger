@@ -38,6 +38,7 @@ export interface PlacedField {
   align?: "left" | "center" | "right"
   visible?: boolean
   locked?: boolean
+  isStatic?: boolean
 }
 
 /**
@@ -221,9 +222,11 @@ async function generateSingleMergedPDF(
     const page = pages[pageIndex]
     const { width: pdfWidth, height: pdfHeight } = page.getSize()
 
-    // Resolve the value from the CSV row, fallback to field placeholder name
-    const textValue =
-      row[field.fieldName] !== undefined
+    // Resolve the value from the CSV row, fallback to field placeholder name.
+    // Static fields use their own fieldName as the display text.
+    const textValue = field.isStatic
+      ? field.fieldName
+      : row[field.fieldName] !== undefined
         ? row[field.fieldName]
         : `{{${field.fieldName}}}`
 
@@ -362,9 +365,11 @@ export async function generateCombinedPDF(
       const page = finalPages[targetPageIndex]
       const { width: pdfWidth, height: pdfHeight } = page.getSize()
 
-      // Resolve the value from the CSV row, fallback to field placeholder name
-      const textValue =
-        row[field.fieldName] !== undefined
+      // Resolve the value from the CSV row, fallback to field placeholder name.
+      // Static fields use their own fieldName as the display text.
+      const textValue = field.isStatic
+        ? field.fieldName
+        : row[field.fieldName] !== undefined
           ? row[field.fieldName]
           : `{{${field.fieldName}}}`
 
