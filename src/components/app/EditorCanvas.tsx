@@ -169,6 +169,7 @@ interface EditorCanvasProps {
   onAddGuide: (orientation: "horizontal" | "vertical", position: number) => void
   onRemoveGuide: (id: string) => void
   onUpdateGuidePosition: (id: string, position: number) => void
+  onAddTextField?: () => void
 }
 
 export function EditorCanvas({
@@ -209,6 +210,7 @@ export function EditorCanvas({
   onAddGuide,
   onRemoveGuide,
   onUpdateGuidePosition,
+  onAddTextField,
 }: EditorCanvasProps) {
   const memoizedFile = React.useMemo(() => {
     return pdfBytes ? pdfBytes.slice(0) : null
@@ -344,6 +346,7 @@ export function EditorCanvas({
         showRulers={showRulers}
         onSnapToGuidesChange={onSnapToGuidesChange}
         onShowRulersChange={onShowRulersChange}
+        onAddTextField={onAddTextField}
       />
 
       {/* Horizontal ruler — fixed below toolbar */}
@@ -473,8 +476,9 @@ export function EditorCanvas({
                   if (field.page !== currentPage) return []
                   if (field.visible === false && !isPreviewMode) return []
                   const isSelected = selectedFieldIds.includes(field.id)
-                  const displayVal =
-                    isPreviewMode && csvRows[previewRowIndex]
+                  const displayVal = field.isStatic
+                    ? field.fieldName
+                    : isPreviewMode && csvRows[previewRowIndex]
                       ? csvRows[previewRowIndex][field.fieldName] || ""
                       : `{{${field.fieldName}}}`
 
