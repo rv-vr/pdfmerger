@@ -10,6 +10,7 @@ import {
   Redo2,
   Magnet,
   Ruler,
+  Type,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -46,6 +47,7 @@ interface CanvasToolbarProps {
   showRulers: boolean
   onSnapToGuidesChange: (v: boolean) => void
   onShowRulersChange: (v: boolean) => void
+  onAddTextField?: () => void
 }
 
 export function CanvasToolbar({
@@ -69,6 +71,7 @@ export function CanvasToolbar({
   showRulers,
   onSnapToGuidesChange,
   onShowRulersChange,
+  onAddTextField,
 }: CanvasToolbarProps) {
   const currentZoomIdx = ZOOM_STEPS.indexOf(zoom)
   const canZoomOut = currentZoomIdx > 0
@@ -146,6 +149,17 @@ export function CanvasToolbar({
 
       {!isPreviewMode && (
         <>
+          <Separator orientation="vertical" />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onAddTextField}
+            className="gap-1.5"
+            title="Add a static text field"
+          >
+            <Type className="size-3.5" />
+            Add Text
+          </Button>
           <Separator orientation="vertical" />
           <div className="flex items-center gap-0.5">
             <Button
