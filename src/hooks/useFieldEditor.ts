@@ -253,6 +253,7 @@ export function useFieldEditor(
             width: f.width,
             align: f.align,
             visible: f.visible,
+            isStatic: f.isStatic,
           }))
           return
         }
@@ -713,6 +714,21 @@ export function useFieldEditor(
     setSelectedFieldId(newField.id)
   }
 
+  const addStaticTextField = (pos?: { x: number; y: number }) => {
+    snapshot()
+    const newField = {
+      id: `field-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      fieldName: "Text",
+      isStatic: true,
+      x: pos?.x ?? Math.round(nativeWidth * 0.3),
+      y: pos?.y ?? Math.round(nativeHeight * 0.3),
+      page: currentPage,
+      ...DEFAULT_FIELD_PROPS,
+    } as PlacedField
+    setPlacedFields((prev) => [...prev, newField])
+    setSelectedFieldId(newField.id)
+  }
+
   const handleDuplicateField = (field: PlacedField) => {
     snapshot()
     const newField: PlacedField = {
@@ -944,9 +960,10 @@ export function useFieldEditor(
       (f) => f.id === ids[ids.length - 1]
     )
     if (!field || field.locked) return
-    // Find longest value for this field's column across all CSV rows
-    const values = csvRows.map((r) => r[field.fieldName] || "")
-    const longest = values.reduce((a, b) => (a.length > b.length ? a : b), "")
+    // Static fields: fit to own text. CSV fields: find longest value across rows.
+    const longest = field.isStatic
+      ? field.fieldName
+      : csvRows.reduce((a, b) => (a.length > (b[field.fieldName] || "").length ? a : b[field.fieldName] || ""), "")
     const charWidth = 0.6
     const estWidthPx = longest.length * (field.fontSize || 12) * charWidth
     const finalWidth = Math.max(
@@ -1012,6 +1029,7 @@ export function useFieldEditor(
     setIsPreviewMode,
     setPreviewRowIndex,
     addFieldToPage,
+    addStaticTextField,
     handleDuplicateField,
     updateSelectedField,
     commitSelectedField,
