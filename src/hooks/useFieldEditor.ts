@@ -438,7 +438,7 @@ export function useFieldEditor(
                         snapToGuides
                           ? snapWithEdge(
                               f.y + dy,
-                              f.fontSize * 1.5,
+                              f.fontSize,
                               getGuideSnapPoints("horizontal")
                             )
                           : f.y + dy
@@ -502,7 +502,7 @@ export function useFieldEditor(
             const vPts = getGuideSnapPoints("vertical")
             const hPts = getGuideSnapPoints("horizontal")
             xPx = snapWithEdge(xPx, f.width, vPts)
-            yPx = snapWithEdge(yPx, f.fontSize * 1.5, hPts)
+            yPx = snapWithEdge(yPx, f.fontSize, hPts)
           }
         }
         setPlacedFields((prev) =>
@@ -522,7 +522,7 @@ export function useFieldEditor(
           const vPts = getGuideSnapPoints("vertical")
           const hPts = getGuideSnapPoints("horizontal")
           toX = snapWithEdge(toX, f.width, vPts)
-          toY = snapWithEdge(toY, f.fontSize * 1.5, hPts)
+          toY = snapWithEdge(toY, f.fontSize, hPts)
         }
       }
       const deltaX = toX - draggedOrigin.x
@@ -562,7 +562,7 @@ export function useFieldEditor(
             const vPts = getGuideSnapPoints("vertical")
             const hPts = getGuideSnapPoints("horizontal")
             xPx = snapWithEdge(xPx, f.width, vPts)
-            yPx = snapWithEdge(yPx, f.fontSize * 1.5, hPts)
+            yPx = snapWithEdge(yPx, f.fontSize, hPts)
           }
         }
         setPlacedFields((prev) =>
@@ -582,7 +582,7 @@ export function useFieldEditor(
           const vPts = getGuideSnapPoints("vertical")
           const hPts = getGuideSnapPoints("horizontal")
           toX = snapWithEdge(toX, f.width, vPts)
-          toY = snapWithEdge(toY, f.fontSize * 1.5, hPts)
+          toY = snapWithEdge(toY, f.fontSize, hPts)
         }
       }
       const deltaX = toX - draggedOrigin.x
@@ -716,14 +716,39 @@ export function useFieldEditor(
 
   const addStaticTextField = (pos?: { x: number; y: number }) => {
     snapshot()
+    const primaryId =
+      selectedFieldIdsRef.current[selectedFieldIdsRef.current.length - 1]
+    const sourceField =
+      (primaryId
+        ? placedFieldsRef.current.find((f) => f.id === primaryId)
+        : undefined) ??
+      placedFieldsRef.current.find(
+        (f) => f.id === lastSelectedFieldIdRef.current
+      )
+    const props: Partial<PlacedField> = sourceField
+      ? {
+          font: sourceField.font,
+          fontSize: sourceField.fontSize,
+          color: sourceField.color,
+          isBold: sourceField.isBold,
+          isItalic: sourceField.isItalic,
+          width: sourceField.width,
+          align: sourceField.align ?? "left",
+        }
+      : DEFAULT_FIELD_PROPS
+
     const newField = {
       id: `field-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       fieldName: "Text",
       isStatic: true,
-      x: pos?.x ?? Math.round(nativeWidth * 0.3),
-      y: pos?.y ?? Math.round(nativeHeight * 0.3),
+      x: pos?.x ?? (sourceField
+        ? Math.min(nativeWidth, sourceField.x + Math.round(nativeWidth * 0.02))
+        : Math.round(nativeWidth * 0.3)),
+      y: pos?.y ?? (sourceField
+        ? Math.min(nativeHeight, sourceField.y + Math.round(nativeHeight * 0.02))
+        : Math.round(nativeHeight * 0.3)),
       page: currentPage,
-      ...DEFAULT_FIELD_PROPS,
+      ...props,
     } as PlacedField
     setPlacedFields((prev) => [...prev, newField])
     setSelectedFieldId(newField.id)
