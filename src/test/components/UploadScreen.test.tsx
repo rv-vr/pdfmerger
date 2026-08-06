@@ -18,19 +18,19 @@ describe("UploadScreen", () => {
     expect(screen.getByText(/Bulk-merge/i)).toBeInTheDocument()
   })
 
-  it('shows "Upload both files to continue" when no files', () => {
+  it('shows "Upload a PDF template to continue" when no files', () => {
     render(<UploadScreen {...baseProps} />)
     expect(
-      screen.getByText("Upload both files to continue")
+      screen.getByText("Upload a PDF template to continue")
     ).toBeInTheDocument()
   })
 
   it("disables continue button when not ready", () => {
     render(<UploadScreen {...baseProps} />)
-    expect(screen.getByText("Open editor")).toBeDisabled()
+    expect(screen.getByText("Upload PDF to start")).toBeDisabled()
   })
 
-  it('shows "Both files ready" when both uploaded', () => {
+  it('shows "PDF + CSV ready" when both uploaded', () => {
     render(
       <UploadScreen
         {...baseProps}
@@ -38,7 +38,7 @@ describe("UploadScreen", () => {
         csvRows={[{ name: "Alice" }]}
       />
     )
-    expect(screen.getByText("Both files ready")).toBeInTheDocument()
+    expect(screen.getByText("PDF + CSV ready")).toBeInTheDocument()
   })
 
   it("enables continue button when ready", () => {

@@ -84,12 +84,13 @@ describe("hexToRgb", () => {
     expect(result.b).toBe(0)
   })
 
-  it("handles short hex #fff (partial parse, no short-hex expansion)", () => {
+  it("handles short hex #fff (bit-shift partial parse, no short-hex expansion)", () => {
     const result = hexToRgb("#fff")
-    expect(result.r).toBeCloseTo(1, 3)
-    // substring(2,4) = 'f' → parseInt('f',16) = 15 → 15/255 ≈ 0.059
+    // parseInt('fff',16) = 4095 → (4095 >> 16 & 255) = 0
+    expect(result.r).toBeCloseTo(0, 3)
+    // (4095 >> 8 & 255) = 15 → 15/255 ≈ 0.059
     expect(result.g).toBeCloseTo(15 / 255, 3)
-    // substring(4,6) = '' → NaN → 0
-    expect(result.b).toBe(0)
+    // (4095 & 255) = 255 → 1
+    expect(result.b).toBe(1)
   })
 })
