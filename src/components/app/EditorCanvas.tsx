@@ -37,7 +37,7 @@ function getFieldStyle(
 
   const align = field.align ?? "left"
   const fontSizeVal = Math.max(8, (field.fontSize ?? 12) * zoom)
-  const heightVal = fontSizeVal * 1.5
+  const heightVal = fontSizeVal
 
   if (isPreviewMode) {
     return {
@@ -287,7 +287,7 @@ export function EditorCanvas({
           if (f.page !== currentPage) continue
           if (f.visible === false) continue
           const fontSizeVal = Math.max(8, (f.fontSize ?? 12) * zoom)
-          const fHeight = fontSizeVal * 1.5
+          const fHeight = fontSizeVal
           const fLeft = f.x * zoom
           const fTop = f.y * zoom
           const fRight = fLeft + f.width * zoom
@@ -510,7 +510,7 @@ export function EditorCanvas({
                               field.locked
                                 ? "cursor-not-allowed"
                                 : "cursor-grab active:cursor-grabbing",
-                              "bg-white/90 border pl-2 pr-8 shadow-sm",
+                              "bg-white/90 border shadow-sm",
                               isSelected
                                 ? "border-zinc-300 ring-1 ring-blue-400"
                                 : "border-zinc-300 hover:border-primary/60",
